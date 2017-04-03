@@ -186,6 +186,15 @@ ensure_available() {
     fatal_error=1
   fi
 
+  if exist_command opkg
+  then
+    ## We are running OpenWrt, so we need to create symbolic links to stdin, stdout etc
+	ln -sf /proc/self/fd /dev/fd
+	ln -sf /proc/self/fd/2 /dev/stderr
+	ln -sf /proc/self/fd/0 /dev/stdin
+	ln -sf /proc/self/fd/1 /dev/stdout
+  fi
+  
   [ $fatal_error = 1 ] && exit 1
 }
 
