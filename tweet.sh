@@ -85,21 +85,21 @@ load_keys() {
   if [ "$CONSUMER_KEY" = '' -a \
        -f "$work_dir/tweet.client.key" ]
   then
-    log 'Using client key at the current directory.'
+    logger 'Using client key at the current directory.'
     source "$work_dir/tweet.client.key"
   fi
 
   if [ "$CONSUMER_KEY" = '' -a \
        -f ~/.tweet.client.key ]
   then
-    log 'Using client key at the home directory.'
+    logger 'Using client key at the home directory.'
     source ~/.tweet.client.key
   fi
 
   if [ "$CONSUMER_KEY" = '' -a \
        -f "$tools_dir/tweet.client.key" ]
   then
-    log 'Using client key at the tools directory.'
+    logger 'Using client key at the tools directory.'
     source "$tools_dir/tweet.client.key"
   fi
 
@@ -577,8 +577,8 @@ handle_search_results() {
       -o "$owner" = 'null' \
       -o "$owner" = '' ] && continue
 
-    log "$separator"
-    log "TWEET DETECTED: Matched to the given query"
+    logger "$separator"
+    logger "TWEET DETECTED: Matched to the given query"
 
     if [ "$handler" = '' ]
     then
@@ -667,7 +667,7 @@ handle_mentions() {
               detect_type -k "$keywords")"
     [ $? != 0 ] && continue;
 
-    log "Detected: $type"
+    logger "Detected: $type"
 
     case "$type" in
       event-follow )
@@ -1233,7 +1233,7 @@ to_encoded_list() {
     # remove last line break
     tr -d '\n')"
   echo "$transformed"
-  log "to_encoded_list: $transformed"
+  logger "to_encoded_list: $transformed"
 }
 
 extract_tweet_id() {
@@ -1310,10 +1310,10 @@ call_api() {
   local headers="Authorization: OAuth $oauth"
   params="$(echo "$params" | to_encoded_list)"
 
-  log "METHOD : $method"
-  log "URL    : $url"
-  log "HEADERS: $headers"
-  log "PARAMS : $params"
+  logger "METHOD : $method"
+  logger "URL    : $url"
+  logger "HEADERS: $headers"
+  logger "PARAMS : $params"
 
   local file_params=''
   if [ "$file" != '' ]
@@ -1321,7 +1321,7 @@ call_api() {
     local file_param_name="$(echo "$file" | $esed 's/=.+$//')"
     local file_path="$(echo "$file" | $esed 's/^[^=]+=//')"
     file_params="--form $file_param_name=@$file_path"
-    log "FILE   : $file_path (as $file_param_name)"
+    logger "FILE   : $file_path (as $file_param_name)"
   fi
 
   local debug_params=''
@@ -1361,7 +1361,7 @@ call_api() {
          $url"
   fi
   curl_params="$(echo "$curl_params" | tr -d '\n' | $esed 's/  +/ /g')"
-  log "curl $curl_params"
+  logger "curl $curl_params"
   # Command line string for logging couldn't be executed directly because
   # quotation marks in the command line will be passed to curl as is.
   # To avoid sending of needless quotation marks, the command line must be
@@ -1387,7 +1387,7 @@ generate_oauth_header() {
     tr -d '\n')
 
   echo -n "$header"
-  log "HEADER: $header"
+  logger "HEADER: $header"
 }
 
 # usage:
@@ -1408,7 +1408,7 @@ generate_signature() {
     url_encode |
     # Remove last extra line-break
     tr -d '\n')"
-  log "SIGNATURE SOURCE: $signature_source"
+  logger "SIGNATURE SOURCE: $signature_source"
 
   # generate signature
   local signature=$(echo -n "$signature_source" |
@@ -1417,7 +1417,7 @@ generate_signature() {
     tr -d '\n')
 
   echo -n "$signature"
-  log "SIGNATURE: $signature"
+  logger "SIGNATURE: $signature"
 }
 
 common_params() {
